@@ -1,0 +1,31 @@
+{
+  "name": "win32-volume",
+  "version": "1.0.0",
+  "description": "Set volume level or mute functions for Win32 platform.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test",
+    "install": "node-gyp rebuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rohanrhu/node-Win32Volume.git"
+  },
+  "keywords": [
+    "volume",
+    "mute",
+    "windows",
+    "win32",
+    "set",
+    "volume",
+    "audio",
+    "sound"
+  ],
+  "author": "Oğuzhan Eroğlu <rohanrhu2@gmail.com> (http://oguzhaneroglu.com)",
+  "license": "MIT",
+  "gypfile": true,
+  "bugs": {
+    "url": "https://github.com/rohanrhu/node-Win32Volume/issues"
+  },
+  "homepage": "https://github.com/rohanrhu/node-Win32Volume#readme"
+}
