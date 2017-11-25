@@ -3,7 +3,7 @@
 *
 * Win32Volume is a node.js module for setting volume level in Windows platform
 *
-* Copyright (C) 2017 Oðuzhan Eroðlu <rohanrhu2@gmail.com>
+* Copyright (C) 2017 OÄŸuzhan EroÄŸlu <rohanrhu2@gmail.com>
 * Licensed under The MIT License (MIT)
 *
 */
@@ -22,6 +22,7 @@
 struct AsyncWorker {
 	uv_work_t request;
 	v8::Persistent<v8::Function> callback;
+	bool is_callback;
 	bool is_mute;
 	double volume_level;
 	HRESULT result;
@@ -102,6 +103,7 @@ void SetVolume__AsyncWorkerCb(uv_work_t* request, int status) {
 		(data->result == S_OK) ? TRUE : FALSE
 	);
 
+	if (data->is_callback)
 	v8::Local<v8::Function>::New(isolate, data->callback)
 		->Call(
 			isolate->GetCurrentContext()->Global(),
@@ -116,11 +118,17 @@ void SetVolume__Async(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
 	double volume_level = v8::Local<v8::Boolean>::Cast(args[0])->NumberValue();
 
-	v8::Local<v8::Function> cb = v8::Local<v8::Function>::Cast(args[1]);
+	bool is_callback;
+	v8::Local<v8::Function> cb;
+
+	if (is_callback = !args[1]->IsUndefined()) {
+		cb = v8::Local<v8::Function>::Cast(args[1]);
+	}
 
 	AsyncWorker* worker = new AsyncWorker;
 	worker->request.data = worker;
-	worker->callback.Reset(isolate, cb);
+	worker->is_callback = is_callback;
+	if (is_callback) worker->callback.Reset(isolate, cb);
 	worker->volume_level = volume_level;
 
 	uv_queue_work(
@@ -174,6 +182,7 @@ void SetMute__AsyncWorkerCb(uv_work_t* request, int status) {
 		(data->result == S_OK) ? TRUE : FALSE
 	);
 
+	if (data->is_callback)
 	v8::Local<v8::Function>::New(isolate, data->callback)
 		->Call(
 			isolate->GetCurrentContext()->Global(),
@@ -188,11 +197,17 @@ void SetMute__Async(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
 	bool is_mute = v8::Local<v8::Boolean>::Cast(args[0])->NumberValue();
 
-	v8::Local<v8::Function> cb = v8::Local<v8::Function>::Cast(args[1]);
+	bool is_callback;
+	v8::Local<v8::Function> cb;
+
+	if (is_callback = !args[1]->IsUndefined()) {
+		cb = v8::Local<v8::Function>::Cast(args[1]);
+	}
 	
 	AsyncWorker* worker = new AsyncWorker;
 	worker->request.data = worker;
-	worker->callback.Reset(isolate, cb);
+	worker->is_callback = is_callback;
+	if (is_callback) worker->callback.Reset(isolate, cb);
 	worker->is_mute = is_mute;
 	
 	uv_queue_work(

@@ -8,12 +8,18 @@
 *
 */
 
+var path = require('path');
+
 var Win32Volume;
 
 try {
-    Win32Volume = require('./build/Release/win32-volume.node');
+    Win32Volume = require(path.join(__dirname, 'build', 'Release', 'win32-volume.node'));
 } catch (error) {
-    Win32Volume = require('./build/Debug/win32-volume.node');
+    if (error.code == 'MODULE_NOT_FOUND') {
+        Win32Volume = require(path.join(__dirname, 'build', 'Debug', 'win32-volume.node'));
+    } else {
+        throw error;
+    }
 }
 
 module.exports = Win32Volume;
